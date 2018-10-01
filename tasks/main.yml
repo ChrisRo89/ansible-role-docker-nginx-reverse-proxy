@@ -1,0 +1,37 @@
+---
+- name: Prepare docker network for NGINX-Reverse-Proxy container
+  docker_network:
+    name: '{{ nginx_proxy_network }}'
+    ipam_options:
+      subnet: 172.20.0.0/24
+  register: proxy-network
+
+- name: Prepare docker NGINX-Reverse-Proxy container
+  docker_container:
+    name: "{{ nginx_proxy_container_name }}"
+    image: jwilder/nginx-proxy
+    restart_policy: always
+    ports:
+      - '0.0.0.0:80:80'
+      - '0.0.0.0:443:443'
+    volumes:
+      - "{{ nginx_proxy_cert_path }}:/etc/nginx/certs:ro"
+      - "{{ nginx_proxy_htaccess_path }}:/etc/nginx/htaccess:ro"
+      - "{{ nginx_proxy_vhosts_path }}:/etc/nginx/vhost.d:ro"
+      - "{{ docker_sock }}:/tmp/docker.sock:ro"
+      - "/usr/share/nginx/html"
+    labels:
+      "com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy": ''
+  register: nginx-proxy
+  when: proxy-network.state == present
+
+- name: Prepare Let's Encrypt cert container
+  docker_container:
+    name: '{{ letsencrypt_container_name }}'
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    restart_policy: always
+    volumes:
+      - "{{ nginx_proxy_cert_path }}:/etc/nginx/certs:rw"
+      - "{{ docker_sock }}:/tmp/docker.sock:ro"
+    volumes_from:
+      - "{{ nginx_proxy_container_name }}"

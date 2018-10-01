@@ -1,0 +1,9 @@
+---
+nginx_proxy_container_name: 'nginx-proxy'
+nginx_proxy_cert_path: '/opt/docker/nginx-proxy/certs'
+nginx_proxy_htaccess_path: '/opt/docker/nginx-proxy/htaccess'
+nginx_proxy_vhosts_path: '/opt/docker/nginx-proxy/vhost.d'
+nginx_proxy_network: 'nginx-proxy-net'
+nginx_proxy_default_host: ''
+letsencrypt_container_name: 'letsencrypt-worker'
+docker_sock: '/var/run/docker.sock'
