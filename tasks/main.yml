@@ -18,6 +18,7 @@
       - "{{ nginx_proxy_cert_path }}:/etc/nginx/certs:ro"
       - "{{ nginx_proxy_htaccess_path }}:/etc/nginx/htaccess:ro"
       - "{{ nginx_proxy_vhosts_path }}:/etc/nginx/vhost.d:ro"
+      - "{{ nginx_proxy_conf_path }}:/etc/nginx/conf.d:rw"
       - "{{ docker_sock }}:/tmp/docker.sock:ro"
       - "/usr/share/nginx/html"
     labels:
